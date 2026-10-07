@@ -1,28 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Cadastro de Aluno</h1>
+<form action="exibir_aluno.php" method="POST">
+
+    <label>Nome:</label>
+    <input type="text"  name="nome" ><br><br>
+
+    <label>Email:</label>
+    <input type="email"  name="email" ><br><br>
+
+    <label>Matrícula:</label>
+    <input type="text"  name="matricula" ><br><br>
+
+    <input type="submit" value="Enviar">
+</form>
+
+ <h1>Cadastro de Profesores</h1>
+<form action="exibir_professor.php" method="POST">
+
+    <label>Nome:</label>
+    <input type="text"  name="nome" ><br><br>
+
+    <label>Email:</label>
+    <input type="email"  name="email" ><br><br>
+
+    <label>Disciplina:</label>
+    <input type="text"  name="disciplina" ><br><br>
+
+    <input type="submit" value="Enviar">
+</form>
+
+<h2>Professores Cadastrados</h2>
 <?php
-// Importando as classes
-require_once "Usuario.php";
-require_once "Professor.php";
-require_once "Aluno.php";
-// Criando objetos
-$professor1 = new Professor("Carlos Silva", "carlos@escola.com", "Matemática");
-$professor2 = new Professor("Mariana Souza", "mariana@escola.com", "Física");
+$banco = 'banco.json';
+$professores = [];
 
-$aluno1 = new Aluno("João Santos", "joao@aluno.com", "2025A001");
-$aluno2 = new Aluno("Ana Pereira", "ana@aluno.com", "2025A002");
+if (file_exists($banco)) {
+    $json = file_get_contents($banco);
+    $dados = json_decode($json, true);
 
-// Exibindo informações dos professores
-echo "<h2>Professores</h2>";
-echo $professor1->exibirInfo() . "<br>";
-echo $professor1->darAula() . "<br><br>";
-
-echo $professor2->exibirInfo() . "<br>";
-echo $professor2->darAula() . "<br><br>";
-
-// Exibindo informações dos alunos
-echo "<h2>Alunos</h2>";
-echo $aluno1->exibirInfo() . "<br>";
-echo $aluno1->estudar() . "<br><br>";
-
-echo $aluno2->exibirInfo() . "<br>";
-echo $aluno2->estudar() . "<br><br>";
+    if (isset($dados['professores']) && is_array($dados['professores'])) {
+        $professores = $dados['professores'];
+    }
+}
 ?>
+
+<?php if (count($professores) > 0): ?>
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Disciplina</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($professores as $professor): ?>
+                <tr>
+                    <td><?= htmlspecialchars($professor['nome'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($professor['email'] ?? '') ?></td>
+                    <td><?= htmlspecialchars($professor['disciplina'] ?? '') ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p>Nenhum professor cadastrado.</p>
+<?php endif; ?>
+</body>
+</html>
